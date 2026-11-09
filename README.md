@@ -80,7 +80,7 @@ Every option is an HTML attribute on `<split-flap>`, a property on the element, 
 
 Set `theme="black"` (the default) or `theme="white"`.
 
-![Black and white boards](docs/hero.png)
+![Black board](docs/hero.png)
 
 ![White board](docs/hero-white.png)
 
