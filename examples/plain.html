@@ -1,0 +1,12 @@
+<!doctype html>
+<!-- No ES modules, no customElements: works from file:// and in any WebView. -->
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0b0c}</style>
+<div id="mount"></div>
+<script src="../dist/split-flap.global.js"></script>
+<script>
+  var board = SplitFlapLib.createSplitFlap(document.getElementById("mount"), {
+    lines: ["HELLO FROM A WEBVIEW", "NO MODULES NEEDED"], size: 28, theme: "black", sound: true
+  });
+  window.board = board;
+</script>

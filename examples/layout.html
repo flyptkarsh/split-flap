@@ -1,0 +1,9 @@
+<!doctype html>
+<meta charset="utf-8"><title>Layout – split-flap</title>
+<style>body{margin:0;padding:2rem;background:#101012;display:grid;gap:1.4rem;justify-items:start;font:13px system-ui;color:#9a9aa2}
+split-flap{--split-flap-font-size:1.3rem}p{margin:0 0 .4rem}</style>
+<div><p>lines only (board fits the text)</p><split-flap lines='["GATE B22","BOARDING"]'></split-flap></div>
+<div><p>cols="14" (wider than the text, padded with blanks)</p><split-flap cols="14" lines='["GATE B22","BOARDING"]'></split-flap></div>
+<div><p>rows="4" (extra blank rows)</p><split-flap rows="4" lines='["GATE B22","BOARDING"]'></split-flap></div>
+<div><p>cols="6" (long text is cut off)</p><split-flap cols="6" lines='["GATE B22","BOARDING"]'></split-flap></div>
+<script type="module" src="../dist/split-flap.js"></script>

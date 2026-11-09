@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Themes – split-flap</title>
+<style>body{margin:0;padding:2rem;background:#101012;display:grid;gap:1.5rem;justify-items:center}
+split-flap{--split-flap-font-size:1.6rem}
+.classic{}
+.amber{--split-flap-bg:#2a1b05;--split-flap-fg:#ffb62e;--split-flap-frame:#120b01}
+.green{--split-flap-bg:#06240f;--split-flap-fg:#5dff8a;--split-flap-frame:#010d05}
+.paper{--split-flap-bg:#f2efe6;--split-flap-fg:#161616;--split-flap-frame:#9b9689}
+.blue{--split-flap-bg:#0b2a55;--split-flap-fg:#ffffff;--split-flap-frame:#041229}
+.mono{--split-flap-font:ui-monospace,Menlo,monospace}</style>
+<split-flap theme="black" lines='["BLACK BOARD     "]'></split-flap>
+<split-flap theme="white" lines='["WHITE BOARD     "]'></split-flap>
+<split-flap class="amber" lines='["AMBER TERMINAL"]'></split-flap>
+<split-flap class="green" lines='["GREEN PHOSPHOR"]'></split-flap>
+<split-flap class="blue" lines='["OCEAN BLUE     "]'></split-flap>
+<script type="module" src="../dist/split-flap.js"></script>

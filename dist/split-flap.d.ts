@@ -1,35 +1,46 @@
-export declare class SplitFlapDisplay extends HTMLElement {
-    static observedAttributes: string[];
+export interface SplitFlapOptions {
+    lines?: string[];
+    cols?: number;
+    rows?: number;
+    size?: string | number;
+    theme?: "black" | "white";
+    sound?: boolean;
+    volume?: number;
+    flapMs?: number;
+    charset?: string;
+}
+/** Core renderer. Attaches a shadow root to any element you give it. */
+export declare class SplitFlap {
+    readonly host: HTMLElement;
     private shadow;
     private board;
     private rows;
-    private _lines;
+    private o;
     private audio?;
     private lastClick;
-    constructor();
-    /** Text lines to display. Setting this animates the flaps to the new text. */
+    constructor(host: HTMLElement, opts?: SplitFlapOptions);
+    /** Update any options; the board re-renders and animates. */
+    set(opts: SplitFlapOptions): this;
     get lines(): string[];
     set lines(v: string[]);
-    get charset(): string;
-    get flapMs(): number;
-    /** Fixed number of rows (blank rows are added/extra rows dropped). Default: number of lines. */
+    get cols(): number;
+    set cols(v: number);
     get rowCount(): number;
     set rowCount(v: number);
-    /** Fixed characters per row. Default: longest line. */
-    get colCount(): number;
-    set colCount(v: number);
-    /** Board size: any CSS length ("3rem", "48px") or a number of px. Scales the whole board. */
-    get size(): string | null;
+    get size(): string | number | null;
     set size(v: string | number | null);
-    /** Click volume, 0 to 1 (default 0.15). */
-    get volume(): number;
-    set volume(v: number);
-    set flapMs(v: number);
+    get theme(): "black" | "white";
+    set theme(v: "black" | "white");
     get sound(): boolean;
     set sound(v: boolean);
-    attributeChangedCallback(name: string, _o: string | null, v: string | null): void;
-    connectedCallback(): void;
-    private get cols();
+    get volume(): number;
+    set volume(v: number);
+    get flapMs(): number;
+    set flapMs(v: number);
+    get charset(): string;
+    /** Stop animating and remove the board. */
+    destroy(): void;
+    private get colsEff();
     private get visibleLines();
     private makeCell;
     private glyph;
@@ -41,17 +52,36 @@ export declare class SplitFlapDisplay extends HTMLElement {
     /** One shared animation loop drives every flap — cheap even for hundreds of cells. */
     private frame;
     private settle;
+    /** iOS/Safari only start audio from a user gesture: unlock on the first touch/click. */
+    private armAudio;
     /** Soft mechanical tick, throttled so a full board doesn't blare. */
     private tick;
 }
-/** Imperative helper for code that doesn't use custom elements directly. */
-export declare function createSplitFlap(container: HTMLElement, opts?: {
-    lines?: string[];
-    cols?: number;
-    rows?: number;
-    size?: string | number;
-    sound?: boolean;
-    volume?: number;
-    flapMs?: number;
-    charset?: string;
-}): SplitFlapDisplay;
+/** Mount a board in `container` using a plain element: works in extensions and WebViews. */
+export declare function createSplitFlap(container: HTMLElement, opts?: SplitFlapOptions): SplitFlap;
+/** <split-flap> custom element: a thin attribute/property wrapper around SplitFlap. */
+declare const HTMLElementBase: typeof HTMLElement;
+export declare class SplitFlapDisplay extends HTMLElementBase {
+    static observedAttributes: string[];
+    private core;
+    get lines(): string[];
+    set lines(v: string[]);
+    get colCount(): number;
+    set colCount(v: number);
+    get rowCount(): number;
+    set rowCount(v: number);
+    get size(): string | number | null;
+    set size(v: string | number | null);
+    get theme(): "black" | "white";
+    set theme(v: "black" | "white");
+    get sound(): boolean;
+    set sound(v: boolean);
+    get volume(): number;
+    set volume(v: number);
+    get flapMs(): number;
+    set flapMs(v: number);
+    attributeChangedCallback(name: string, _o: string | null, v: string | null): void;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+}
+export {};

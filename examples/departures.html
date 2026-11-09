@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Departures – split-flap</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0b0c}
+split-flap{--split-flap-font-size:clamp(.7rem,2.6vw,1.9rem)}</style>
+<split-flap id="b" cols="36" rows="6"></split-flap>
+<script type="module" src="../dist/split-flap.js"></script>
+<script type="module">
+const row=(t,d,f,s)=>`${t}  ${d.padEnd(13)}${f}  ${s}`;
+const A=[row("07:15","LONDON","BA117","ON TIME"),row("07:40","PARIS","AF008","DELAYED"),row("08:05","TOKYO","JL044","BOARDING"),row("08:30","NEW YORK","AA100","GATE B22"),row("08:55","DUBAI","EK202","ON TIME"),row("09:20","ROME","AZ611","CANCELLED")];
+const B=[row("09:45","SYDNEY","QF001","BOARDING"),row("10:10","LISBON","TP203","GATE A04"),row("10:35","ZURICH","LX038","ON TIME"),row("11:00","MADRID","IB321","DELAYED"),row("11:25","DOHA","QR701","BOARDING"),row("11:50","SEOUL","KE081","ON TIME")];
+const b=document.getElementById("b");const q=new URLSearchParams(location.search);
+if(q.get("theme"))b.theme=q.get("theme");
+b.lines=q.get("set")==="b"?B:A;
+if(!q.has("static"))setInterval(()=>{b.lines=b.lines===A?B:A},9000);
+window.__sets={A,B};
+</script>
