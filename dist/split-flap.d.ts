@@ -12,11 +12,25 @@ export declare class SplitFlapDisplay extends HTMLElement {
     set lines(v: string[]);
     get charset(): string;
     get flapMs(): number;
+    /** Fixed number of rows (blank rows are added/extra rows dropped). Default: number of lines. */
+    get rowCount(): number;
+    set rowCount(v: number);
+    /** Fixed characters per row. Default: longest line. */
+    get colCount(): number;
+    set colCount(v: number);
+    /** Board size: any CSS length ("3rem", "48px") or a number of px. Scales the whole board. */
+    get size(): string | null;
+    set size(v: string | number | null);
+    /** Click volume, 0 to 1 (default 0.15). */
+    get volume(): number;
+    set volume(v: number);
+    set flapMs(v: number);
     get sound(): boolean;
     set sound(v: boolean);
     attributeChangedCallback(name: string, _o: string | null, v: string | null): void;
     connectedCallback(): void;
     private get cols();
+    private get visibleLines();
     private makeCell;
     private glyph;
     private paint;
@@ -34,7 +48,10 @@ export declare class SplitFlapDisplay extends HTMLElement {
 export declare function createSplitFlap(container: HTMLElement, opts?: {
     lines?: string[];
     cols?: number;
+    rows?: number;
+    size?: string | number;
     sound?: boolean;
+    volume?: number;
     flapMs?: number;
     charset?: string;
 }): SplitFlapDisplay;

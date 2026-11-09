@@ -47,10 +47,15 @@ Vue and Svelte: use the element directly and set the `lines` property.
 | Attribute / property | Description |
 | --- | --- |
 | `lines` (array property, or JSON attribute) | Text rows. Unknown characters become blanks. Uppercased automatically. |
-| `cols` | Characters per row (default: longest line) |
+| `cols` / `colCount` | Characters per row (default: longest line) |
+| `rows` / `rowCount` | Number of rows; pads with blank rows or drops extras (default: number of lines) |
+| `size` | Board size: a CSS length (`3rem`, `48px`) or a number of px. Scales everything |
+| `volume` | Click volume 0 to 1 (default 0.15) |
 | `charset` | Characters on the flap drum (default ` A-Z0-9:.-/`) |
 | `flap-ms` | Time per flip in ms (default 70) |
-| `sound` | Enable click sound (browsers require a prior user gesture) |
+| `sound` | Presence enables the click sound; toggle with `el.sound = false`. Browsers require a prior user gesture |
+
+All settings can be changed live, e.g. `el.size = 40; el.sound = false; el.rowCount = 6;`. Options also work in `createSplitFlap(container, { size, rows, cols, sound, volume, flapMs, charset, lines })`.
 
 CSS: `--split-flap-font-size`, `--split-flap-bg`, `--split-flap-fg`, `--split-flap-gap`.
 

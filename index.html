@@ -5,7 +5,12 @@
 main{display:grid;gap:1rem;justify-items:start;padding:1rem}split-flap{--split-flap-font-size:clamp(.8rem,3vw,2rem)}</style>
 <main>
   <split-flap id="b" cols="24" sound></split-flap>
-  <button id="go">Shuffle</button>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+    <button id="go">Shuffle</button>
+    <label><input type="checkbox" id="snd" checked> Sound</label>
+    <label>Size <input type="range" id="sz" min="12" max="56" value="32"></label>
+    <label>Rows <input type="number" id="rw" min="1" max="8" value="4" style="width:3em"></label>
+  </div>
 </main>
 <script type="module" src="./dist/split-flap.js"></script>
 <script type="module">
@@ -14,6 +19,9 @@ const sets=[
  ["DUBAI    EK202  ON TIME","ROME     AZ611  CANCELLED","SYDNEY   QF001  BOARDING","LISBON   TP203  GATE A04"],
  ["ZURICH   LX038  ON TIME","MADRID   IB321  DELAYED","DOHA     QR701  BOARDING","SEOUL    KE081  GATE C11"]];
 let i=0;const b=document.getElementById("b");b.lines=sets[0];
+snd.onchange=()=>b.sound=snd.checked;
+sz.oninput=()=>b.size=sz.value;
+rw.onchange=()=>b.rowCount=+rw.value;
 document.getElementById("go").onclick=()=>{b.lines=sets[++i%sets.length]};
 setInterval(()=>{b.lines=sets[++i%sets.length]},9000);
 </script>

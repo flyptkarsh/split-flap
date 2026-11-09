@@ -32,7 +32,7 @@ type Cell = {
 };
 
 export class SplitFlapDisplay extends HTMLElement {
-  static observedAttributes = ["lines", "cols", "sound", "charset", "flap-ms"];
+  static observedAttributes = ["lines", "cols", "rows", "size", "sound", "volume", "charset", "flap-ms"];
 
   private shadow = this.attachShadow({ mode: "open" });
   private board = document.createElement("div");
@@ -56,6 +56,20 @@ export class SplitFlapDisplay extends HTMLElement {
 
   get charset(): string { return this.getAttribute("charset") ?? DEFAULT_CHARSET; }
   get flapMs(): number { return Number(this.getAttribute("flap-ms")) || 70; }
+  /** Fixed number of rows (blank rows are added/extra rows dropped). Default: number of lines. */
+  get rowCount(): number { return Number(this.getAttribute("rows")) || 0; }
+  set rowCount(v: number) { v > 0 ? this.setAttribute("rows", String(v)) : this.removeAttribute("rows"); }
+  /** Fixed characters per row. Default: longest line. */
+  get colCount(): number { return Number(this.getAttribute("cols")) || 0; }
+  set colCount(v: number) { v > 0 ? this.setAttribute("cols", String(v)) : this.removeAttribute("cols"); }
+  /** Board size: any CSS length ("3rem", "48px") or a number of px. Scales the whole board. */
+  get size(): string | null { return this.getAttribute("size"); }
+  set size(v: string | number | null) { v == null ? this.removeAttribute("size") : this.setAttribute("size", String(v)); }
+  /** Click volume, 0 to 1 (default 0.15). */
+  get volume(): number { const v = parseFloat(this.getAttribute("volume") ?? ""); return isNaN(v) ? 0.15 : Math.min(1, Math.max(0, v)); }
+  set volume(v: number) { this.setAttribute("volume", String(v)); }
+  set flapMs(v: number) { this.setAttribute("flap-ms", String(v)); }
+
   get sound(): boolean { return this.hasAttribute("sound"); }
   set sound(v: boolean) { this.toggleAttribute("sound", v); }
 
@@ -63,14 +77,22 @@ export class SplitFlapDisplay extends HTMLElement {
     if (name === "lines" && v) {
       try { const p = JSON.parse(v); if (Array.isArray(p)) this.lines = p; }
       catch { this.lines = v.split("\n"); }
-    } else if (name === "cols") this.render();
+    } else if (name === "size") {
+      if (v == null || v === "") this.style.removeProperty("--split-flap-font-size");
+      else this.style.setProperty("--split-flap-font-size", /^[\d.]+$/.test(v) ? v + "px" : v);
+    } else if (name === "cols" || name === "rows") this.render();
   }
 
   connectedCallback() { this.render(); }
 
   private get cols(): number {
-    const attr = Number(this.getAttribute("cols"));
-    return attr > 0 ? attr : Math.max(1, ...this._lines.map((l) => l.length));
+    return this.colCount > 0 ? this.colCount : Math.max(1, ...this._lines.map((l) => l.length));
+  }
+
+  private get visibleLines(): string[] {
+    const n = this.rowCount;
+    if (!n) return this._lines;
+    return Array.from({ length: n }, (_, i) => this._lines[i] ?? "");
   }
 
   private makeCell(): Cell {
@@ -99,10 +121,11 @@ export class SplitFlapDisplay extends HTMLElement {
   private render() {
     if (!this.isConnected) return;
     const cols = this.cols;
+    const lines = this.visibleLines;
     // Grow/shrink the grid.
-    while (this.rows.length > this._lines.length) this.rows.pop();
+    while (this.rows.length > lines.length) this.rows.pop();
     this.board.replaceChildren();
-    this._lines.forEach((_, r) => {
+    lines.forEach((_, r) => {
       const row = this.rows[r] ?? (this.rows[r] = []);
       row.length = Math.min(row.length, cols);
       while (row.length < cols) row.push(this.makeCell());
@@ -111,10 +134,10 @@ export class SplitFlapDisplay extends HTMLElement {
       el.append(...row.map((c) => c.root));
       this.board.append(el);
     });
-    this.board.setAttribute("aria-label", this._lines.join(", "));
+    this.board.setAttribute("aria-label", lines.join(", "));
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    this._lines.forEach((line, r) => {
+    lines.forEach((line, r) => {
       const padded = line.toUpperCase().padEnd(cols, " ").slice(0, cols);
       [...padded].forEach((ch, c) => {
         const cell = this.rows[r][c];
@@ -188,7 +211,7 @@ export class SplitFlapDisplay extends HTMLElement {
       const d = buf.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 3;
       const src = ctx.createBufferSource(), g = ctx.createGain();
-      g.gain.value = 0.15; src.buffer = buf; src.connect(g).connect(ctx.destination); src.start();
+      g.gain.value = this.volume; src.buffer = buf; src.connect(g).connect(ctx.destination); src.start();
     } catch { /* audio unavailable until a user gesture */ }
   }
 }
@@ -200,12 +223,15 @@ if (typeof customElements !== "undefined" && !customElements.get("split-flap")) 
 /** Imperative helper for code that doesn't use custom elements directly. */
 export function createSplitFlap(
   container: HTMLElement,
-  opts: { lines?: string[]; cols?: number; sound?: boolean; flapMs?: number; charset?: string } = {}
+  opts: { lines?: string[]; cols?: number; rows?: number; size?: string | number; sound?: boolean; volume?: number; flapMs?: number; charset?: string } = {}
 ): SplitFlapDisplay {
   const el = document.createElement("split-flap") as SplitFlapDisplay;
   if (opts.cols) el.setAttribute("cols", String(opts.cols));
   if (opts.flapMs) el.setAttribute("flap-ms", String(opts.flapMs));
   if (opts.charset) el.setAttribute("charset", opts.charset);
+  if (opts.rows) el.rowCount = opts.rows;
+  if (opts.size != null) el.size = opts.size;
+  if (opts.volume != null) el.volume = opts.volume;
   if (opts.sound) el.sound = true;
   container.append(el);
   if (opts.lines) el.lines = opts.lines;
