@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>split-flap demo</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#050506;color:#aaa;font:14px system-ui}
+main{display:grid;gap:1rem;justify-items:start;padding:1rem}split-flap{--split-flap-font-size:clamp(.8rem,3vw,2rem)}</style>
+<main>
+  <split-flap id="b" cols="24" sound></split-flap>
+  <button id="go">Shuffle</button>
+</main>
+<script type="module" src="./dist/split-flap.js"></script>
+<script type="module">
+const sets=[
+ ["LONDON   BA117  ON TIME","PARIS    AF008  DELAYED","TOKYO    JL044  BOARDING","NEW YORK AA100  GATE B22"],
+ ["DUBAI    EK202  ON TIME","ROME     AZ611  CANCELLED","SYDNEY   QF001  BOARDING","LISBON   TP203  GATE A04"],
+ ["ZURICH   LX038  ON TIME","MADRID   IB321  DELAYED","DOHA     QR701  BOARDING","SEOUL    KE081  GATE C11"]];
+let i=0;const b=document.getElementById("b");b.lines=sets[0];
+document.getElementById("go").onclick=()=>{b.lines=sets[++i%sets.length]};
+setInterval(()=>{b.lines=sets[++i%sets.length]},9000);
+</script>

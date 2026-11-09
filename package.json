@@ -1,0 +1,21 @@
+{
+  "name": "split-flap",
+  "version": "1.0.0",
+  "description": "A modern split-flap (Solari) display as a framework-agnostic web component. Works in React, Next.js, Vue, Svelte, Angular, or plain HTML.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/split-flap.js",
+  "module": "dist/split-flap.js",
+  "types": "dist/split-flap.d.ts",
+  "exports": {
+    ".": { "types": "./dist/split-flap.d.ts", "default": "./dist/split-flap.js" }
+  },
+  "files": ["dist"],
+  "sideEffects": true,
+  "scripts": {
+    "build": "esbuild src/split-flap.ts --bundle --format=esm --minify --outfile=dist/split-flap.js && tsc --emitDeclarationOnly --declaration --outDir dist",
+    "demo": "npm run build && npx serve ."
+  },
+  "keywords": ["solari", "split-flap", "departure-board", "web-component", "custom-element"],
+  "devDependencies": { "esbuild": "^0.25.0", "typescript": "^5.6.0" }
+}
